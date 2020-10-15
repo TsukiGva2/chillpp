@@ -23,7 +23,7 @@ int nR 	       = 0;
 int used       = 0;
 int nused      = 0;
 char *keyw[5]  = {"yell","say","maybe","?NUM","skip"};
-char *aritm[9] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from"};
+char *aritm[10] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from"};
 char *comp[4]  = {"eqs",">","<","not"};
 
 int pow_(int base,int exp){
@@ -55,6 +55,26 @@ char *sbst(char *source,int spos,int epos){
 	}
 	sub[c] = '\0';
 	return(sub);
+}
+
+int lookfor_vn(char **vnames,char *wha){
+	int w_len = strlen(wha);
+	int len = 0;
+	int match = 0;
+	for(int t = 0;t < nused;t++){
+		len = strlen(vnames[t]);
+		for(int d = 0;d < len;d++){
+			for(int n = 0;n < w_len;n++){
+				if(vnames[t][d] != wha[n]){
+					continue;
+				}
+				match += 1;
+				if(match == w_len){
+					return(t);
+				}
+			}
+		}
+	}
 }
 
 int lookfor_var(char **varnames,char *what){
@@ -140,7 +160,7 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 						printf("%s\n",sbst(slice,lookfor(keyw[1],slice) + strlen(keyw[1]) + 1,strlen(slice)));
 					}
 				} else if(lookfor("!",ln) != strlen(ln) && lookfor("%",ln) != strlen(ln)){
-					int name = lookfor_var(nvnames,sbst(ln,lookfor("!",ln) + 1,lookfor("%",ln)));
+					int name = lookfor_vn(nvnames,sbst(ln,lookfor("!",ln) + 1,lookfor("%",ln)));
 					if(name != -1){
 						printf("%s%d%s\n",sbst(ln,lookfor(keyw[1],ln) + strlen(keyw[1]) + 1,lookfor("!",ln)),nvals[name],sbst(ln,lookfor("%",ln) + 1,lookfor(";",ln)));
 					} else {
@@ -291,6 +311,7 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				nvnames[nused] = malloc(MAXL);
 				strcpy(nvnames[nused],sbst(ln,lookfor(aritm[8],ln) + strlen(aritm[8]) + 1,lookfor(";",ln)));
 				nvals[nused] = nR;
+				printf("\n%s = %d\n",nvnames[nused],nvals[nused]);
 				nused += 1;
 			}
 			else if(lookfor(aritm[l],ln) != strlen(ln) && l < 8 && l != 6){

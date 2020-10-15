@@ -31,5 +31,11 @@ say !vlol%;
 ?NUM eqs 12;
 say yes;
 
+add 50;
+say %NUM%;
+store-in go;
+
+say !go%;
+
 ?NUM > 1;
 say yes;
