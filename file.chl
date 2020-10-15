@@ -14,8 +14,19 @@ mod 23;
 nop	now we are making operations with the value in %NUM%
 nop	and not in the variable itself
 
-say %NUM%;
-nop	we show the value in %NUM%
+repeat printing the %NUM% variable directly is bad,;
+nop	"repeat" prints literally what you wrote
+say you will see why.;
+
+say ;
+repeat "say %NUM%hithere" results in:;
+say ;
+say %NUM%hithere;
+say ;
+
+nop	we show the value in %NUM%, WARNING: dont print %NUM% directly
+nop	store the value first and then print it, we will talk about it
+nop	in the cool stuff section
 
 nop	NOTE: we can store the value in %NUM% into a special type of variable
 nop	that we will talk about later
@@ -25,20 +36,6 @@ nop 	skips specified number of lines
 say ignored;
 nop 	WARNING: comments DO count as lines though
 
-store-in vlol;
-say !vlol%;
-
-?NUM eqs 12;
-say yes;
-
-add 50;
-say %NUM%;
-store-in go;
-
-say !go%;
-
-?NUM > 1;
-say yes;
-
-load-from vlol;
-say %NUM%;
+nop	/////////////////////////////////////////
+nop		  COOL STUFF DOWN HERE!
+nop	///////////////////////////////////////// 

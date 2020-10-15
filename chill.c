@@ -28,11 +28,11 @@
 int nR 	        = 0;
 int used        = 0;
 int nused       = 0;
-char *keyw[5]   = {"yell","say","maybe","?NUM","skip"};
+char *keyw[6]   = {"yell","say","maybe","?NUM","skip","repeat"};
 char *aritm[10] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from"};
 char *comp[4]   = {"eqs",">","<","not"};
 
-// pow_(5,2) = 25
+// pow_(5,2) = 5*5 = 25
 int pow_(int base,int exp){
 	long long result = 1;
 	while(exp != 0){
@@ -82,34 +82,25 @@ int lookfor_vn(char **vnames,char *wha){
 			}
 		}
 	}
+	return(-1);
 }
 
 int lookfor_var(char **varnames,char *what){
 	int w_len = strlen(what);
 	int len = 0;
 	int match = 0;
-	for(int o = 0;o < used;o++){
-		len = strlen(varnames[o]);
-		for(int l = 0;l < len;l++){
-			for(int p = 0;p < w_len;p++){
-				if(varnames[l][o + p] != what[p]){
+	for(int t = 0;t < used;t++){
+		len = strlen(varnames[t]);
+		for(int d = 0;d < len;d++){
+			for(int n = 0;n < w_len;n++){
+				if(varnames[t][d] != what[n]){
 					continue;
 				}
 				match += 1;
 				if(match == w_len){
-					return(o);
+					return(t);
 				}
 			}
-		}
-	}
-	return(-1);
-}
-
-int lookfor_arr(char *what,char *where[]){
-	int len = sizeof(*where) / sizeof(char);
-	for(int i = 0;i <= len;i++){
-		if(where[i] == what){
-			return(i);
 		}
 	}
 	return(-1);
@@ -156,27 +147,37 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 	}
 	char *slice = sbst(ln,0,lookfor(";",ln));
 	char *newl = "\n";
-	for(int i = 0;i < 5;i++){
-		if(lookfor(keyw[i],slice) != strlen(slice)){
-			if(keyw[i] == keyw[1]){
+	for(int i = 6;i > -1;i--){
+		if(lookfor(keyw[i],ln) != strlen(ln)){
+			if(keyw[i] == keyw[5]){
+				printf("%s\n",sbst(ln,lookfor(keyw[5],ln) + strlen(keyw[5]) + 1,lookfor(";",ln)));
+				return(0);
+			}
+			else if(keyw[i] == keyw[1]){
 				if(lookfor("/",ln) != strlen(ln) && lookfor("%",ln) != strlen(ln)){
 					int name = lookfor_var(varnames,sbst(ln,lookfor("/",ln) + 1,lookfor("%",ln)));
 					if(name != -1){
 						printf("%s%s%s\n",sbst(ln,lookfor(keyw[1],ln) + strlen(keyw[1]) + 1,lookfor("/",ln)),values[name],sbst(ln,lookfor("%",ln) + 1,lookfor(";",ln)));
+						return(0);
 					} else {
 						printf("%s\n",sbst(slice,lookfor(keyw[1],slice) + strlen(keyw[1]) + 1,strlen(slice)));
+						return(0);
 					}
 				} else if(lookfor("!",ln) != strlen(ln) && lookfor("%",ln) != strlen(ln)){
 					int name = lookfor_vn(nvnames,sbst(ln,lookfor("!",ln) + 1,lookfor("%",ln)));
 					if(name != -1){
 						printf("%s%d%s\n",sbst(ln,lookfor(keyw[1],ln) + strlen(keyw[1]) + 1,lookfor("!",ln)),nvals[name],sbst(ln,lookfor("%",ln) + 1,lookfor(";",ln)));
+						return(0);
 					} else {
 						printf("%s\n",sbst(slice,lookfor(keyw[1],slice) + strlen(keyw[1]) + 1,strlen(slice)));
+						return(0);
 					}
 				} else if(lookfor("%NUM%",ln) != strlen(ln)) {
-					printf("%s%d%s\n",sbst(ln,lookfor(keyw[1],ln) + strlen(keyw[1]) + 1,lookfor("%NUM%",ln)),nR,sbst(ln,lookfor("%NUM%",ln) + strlen("%NUM%") + 1,lookfor(";",ln)));
+					printf("%s%d%s\n",sbst(ln,lookfor(keyw[1],ln) + strlen(keyw[1]) + 1,lookfor("%NUM%",ln)),nR,sbst(ln,lookfor("%NUM%",ln) + strlen("%NUM%"),lookfor(";",ln)));
+					return(0);
 				} else {
 					printf("%s\n",sbst(slice,lookfor(keyw[1],slice) + strlen(keyw[1]) + 1,strlen(slice)));
+					return(0);
 				}
 			}
 			else if(keyw[i] == keyw[0]){
@@ -318,7 +319,6 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				nvnames[nused] = malloc(MAXL);
 				strcpy(nvnames[nused],sbst(ln,lookfor(aritm[8],ln) + strlen(aritm[8]) + 1,lookfor(";",ln)));
 				nvals[nused] = nR;
-				printf("\n%s = %d\n",nvnames[nused],nvals[nused]);
 				nused += 1;
 			}
 			else if(aritm[l] == aritm[9]){
@@ -369,7 +369,9 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				}
 			}
 		}
-	} return(0);
+	} 
+exit:
+	return(0);
 }
 
 int main(int argc, char *argv[]){
@@ -379,7 +381,7 @@ int main(int argc, char *argv[]){
 	char *(*values) = malloc(used + 100 * sizeof(char[MAXL]));
 	int (*nvalues) = malloc(nused + 100 * sizeof(int));
 	if(argc > 1){
-		if(strcmp(argv[1], "-f") == 0 || strcmp(argv[1], "--file") == 0 && argc > 2){
+		if((strcmp(argv[1], "-f") == 0 || strcmp(argv[1], "--file") == 0) && argc > 2){
 			char  line[MAXL];
 			FILE *filePtr;
 			int   linum   = 0;
