@@ -25,5 +25,11 @@ nop 	skips specified number of lines
 say ignored;
 nop 	WARNING: comments DO count as lines though
 
-store-in lol;
-say !lol%;
+store-in vlol;
+say !vlol%;
+
+?NUM eqs 12;
+say yes;
+
+?NUM > 1;
+say yes;

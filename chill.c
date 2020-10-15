@@ -14,14 +14,16 @@
 #define COMMENT 2
 #define STOPPED 3
 #define SKIPPED 4
+#define OPERROR 5
 
+#define TEMPINT int
 #define COUNTER int
 
 int nR 	       = 0;
 int used       = 0;
 int nused      = 0;
-char *keyw[5]  = {"yell","say","maybe","assuming","skip"};
-char *aritm[9] = {"is","add","sub","mul","pow","div","num","mod","store-in"};
+char *keyw[5]  = {"yell","say","maybe","?NUM","skip"};
+char *aritm[9] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from"};
 char *comp[4]  = {"eqs",">","<","not"};
 
 int pow_(int base,int exp){
@@ -178,7 +180,63 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				}
 				*ign = cR;
 			}
-			else if(i == 234){
+			else if(keyw[i] == keyw[3]){
+				char *sub;
+				int operator = -1;
+				for(int v = 0;v < 4;v++){
+					if(lookfor(comp[v],ln) != strlen(ln)){
+						char *sub = sbst(ln,lookfor(keyw[3],ln) + strlen(keyw[3]) + 1,lookfor(comp[v],ln) - 1);
+						operator = v;
+						break;
+					}
+				}
+				if(operator == -1){
+					return(OPERROR);
+				}
+				int conv[strlen(sub)];
+				for(int e = 0;e < strlen(sub);e++){
+					conv[e] = cvrt(sub[e]);
+				}
+				int arrlen = sizeof(conv) / 4;
+				TEMPINT Comp_nR = 0;
+				for(int h = 0;h < arrlen;h++){
+					if(arrlen - (h + 1) != 0){
+						Comp_nR += conv[h] * pow_(10,arrlen - (h + 1));
+					}
+					else {
+						Comp_nR += conv[h];
+					}
+				}
+				switch(operator){
+					case 0:
+						if(Comp_nR == nR){
+							
+						} else {
+							*kgoin = 1;
+						}
+					break;
+					case 1:
+						if(Comp_nR > nR){
+							
+						} else {
+							*kgoin = 1;
+						}
+					break;
+					case 2:
+						if(Comp_nR < nR){
+							
+						} else {
+							*kgoin = 1;
+						}
+					break;
+					case 3:
+						if(Comp_nR != nR){
+							
+						} else {
+							*kgoin = 1;
+						}
+					break;
+				}
 			}
 		}
 	}
@@ -240,7 +298,7 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				int conv[strlen(subs)];
 				for(int m = 0;m < strlen(subs);m++){
 					conv[m] = cvrt(subs[m]);
-				}
+				}	
 				int arrlen = sizeof(conv) / 4;
 				int snR = 0;
 				for(int h = 0;h < arrlen;h++){
