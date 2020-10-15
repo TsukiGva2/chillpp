@@ -21,7 +21,7 @@ int nR 	       = 0;
 int used       = 0;
 int nused      = 0;
 char *keyw[5]  = {"yell","say","maybe","assuming","skip"};
-char *aritm[9] = {"is","add","sub","mul","pow","div","num","mod","store"};
+char *aritm[9] = {"is","add","sub","mul","pow","div","num","mod","store-in"};
 char *comp[4]  = {"eqs",">","<","not"};
 
 int pow_(int base,int exp){
@@ -130,10 +130,17 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 	for(int i = 0;i < 5;i++){
 		if(lookfor(keyw[i],slice) != strlen(slice)){
 			if(keyw[i] == keyw[1]){
-				if(lookfor("/",ln) != strlen(ln) && lookfor("%",ln)){
+				if(lookfor("/",ln) != strlen(ln) && lookfor("%",ln) != strlen(ln)){
 					int name = lookfor_var(varnames,sbst(ln,lookfor("/",ln) + 1,lookfor("%",ln)));
 					if(name != -1){
 						printf("%s%s%s\n",sbst(ln,lookfor(keyw[1],ln) + strlen(keyw[1]) + 1,lookfor("/",ln)),values[name],sbst(ln,lookfor("%",ln) + 1,lookfor(";",ln)));
+					} else {
+						printf("%s\n",sbst(slice,lookfor(keyw[1],slice) + strlen(keyw[1]) + 1,strlen(slice)));
+					}
+				} else if(lookfor("!",ln) != strlen(ln) && lookfor("%",ln) != strlen(ln)){
+					int name = lookfor_var(nvnames,sbst(ln,lookfor("!",ln) + 1,lookfor("%",ln)));
+					if(name != -1){
+						printf("%s%d%s\n",sbst(ln,lookfor(keyw[1],ln) + strlen(keyw[1]) + 1,lookfor("!",ln)),nvals[name],sbst(ln,lookfor("%",ln) + 1,lookfor(";",ln)));
 					} else {
 						printf("%s\n",sbst(slice,lookfor(keyw[1],slice) + strlen(keyw[1]) + 1,strlen(slice)));
 					}
@@ -187,7 +194,7 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				int name = lookfor_var(varnames,sbst(ln,0,lookfor(aritm[0],slice)));
 				/* NUNCA FAÇA SUBSTRING EM UMA SUBSTRING */
 				if(name != -1){
-					
+					strcpy(values[name],sbst(ln,lookfor("is",ln) + 3,lookfor(";",ln)));
 				}
 				else {
 					varnames[used] = malloc(MAXL);
@@ -218,15 +225,14 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 			}
 			else if(aritm[l] == aritm[8]){
 				if(nused > nused + 95){
-					int *(imore) = realloc(nvals,nused + 100 * sizeof(int));
+					int *imore = realloc(nvals,nused + 100 * sizeof(int*));
 					*nvals = *imore;
 					char *more = realloc(nvnames,nused + 100 * sizeof(char[MAXL]));
 					*nvnames = more;
 				}
-				nvnames[used] = malloc(MAXL);
-				strcpy(nvnames[used],sbst(ln,lookfor(aritm[8],ln) + strlen(aritm[8]) + 1,lookfor(";",ln)));
-				nvals[used] = nR;
-				printf("\n%d\n",nvals[used]);
+				nvnames[nused] = malloc(MAXL);
+				strcpy(nvnames[nused],sbst(ln,lookfor(aritm[8],ln) + strlen(aritm[8]) + 1,lookfor(";",ln)));
+				nvals[nused] = nR;
 				nused += 1;
 			}
 			else if(lookfor(aritm[l],ln) != strlen(ln) && l < 8 && l != 6){
@@ -279,7 +285,7 @@ int main(int argc, char *argv[]){
 	char *(*varnames) = malloc(used + 100 * sizeof(char[MAXL]));
 	char *(*numvarnames) = malloc(nused + 100 * sizeof(char[MAXL]));
 	char *(*values) = malloc(used + 100 * sizeof(char[MAXL]));
-	int *(nvalues) = malloc(nused + 100 * sizeof(int));
+	int (*nvalues) = malloc(nused + 100 * sizeof(int));
 	if(argc > 1){
 		if(strcmp(argv[1], "-f") == 0 || strcmp(argv[1], "--file") == 0 && argc > 2){
 			char  line[MAXL];

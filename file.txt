@@ -22,7 +22,8 @@ nop	that we will talk about later
 
 skip 2;
 nop 	skips specified number of lines
-say ignored
+say ignored;
 nop 	WARNING: comments DO count as lines though
 
-store lol;
+store-in lol;
+say !lol%;
