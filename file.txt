@@ -1,0 +1,13 @@
+say lowercase;
+yell uppercase;
+
+something is 1234;
+num something;
+
+say /something%;
+nop comment
+
+maybe;
+mod 23;
+
+say %NUM%;
