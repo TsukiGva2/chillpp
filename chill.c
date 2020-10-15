@@ -10,12 +10,18 @@
 #include <time.h>
 
 #define MAXL 200
+
 #define COMMENT 2
+#define STOPPED 3
+#define SKIPPED 4
+
+#define COUNTER int
 
 int nR 	       = 0;
 int used       = 0;
-char *keyw[5]  = {"yell","say","maybe","assuming","jump"};
-char *aritm[8] = {"is","add","sub","mul","pow","div","num","mod"};
+int nused      = 0;
+char *keyw[5]  = {"yell","say","maybe","assuming","skip"};
+char *aritm[9] = {"is","add","sub","mul","pow","div","num","mod","store"};
 char *comp[4]  = {"eqs",">","<","not"};
 
 int pow_(int base,int exp){
@@ -104,12 +110,20 @@ void upperc(char *d,int count){
 	}
 }
 
-int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values){
+int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values,char **nvnames,int *nvals){
 	if(lnum == 0){
 		printf(" \b");
 	}
 	if(lookfor("nop",sbst(ln,0,5)) != strlen(sbst(ln,0,5))){
 		return(COMMENT);
+	}
+	if(*ign > 0){
+		*ign -= 1;
+		return(SKIPPED);
+	}
+	if(*kgoin != 0){
+		*kgoin = 0;
+		return(STOPPED);
 	}
 	char *slice = sbst(ln,0,lookfor(";",ln));
 	char *newl = "\n";
@@ -139,15 +153,35 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				ranum = (rand() % 2);
 				*kgoin = ranum;
 			}
+			else if(keyw[i] == keyw[4]){
+				char *ignoredLines = sbst(ln,lookfor(keyw[4],ln) + strlen(keyw[4]) + 1,lookfor(";",ln));
+				int conv[strlen(ignoredLines)];
+				for(int r = 0;r < strlen(ignoredLines);r++){
+					conv[r] = cvrt(ignoredLines[r]);
+				}
+				int arrlen = sizeof(conv) / 4;
+				COUNTER cR = 0;
+				for(int w = 0;w < arrlen;w++){
+					if(arrlen - (w + 1) != 0){
+						cR += conv[w] * pow_(10,arrlen - (w + 1));
+					}
+					else {
+						cR += conv[w];
+					}
+				}
+				*ign = cR;
+			}
+			else if(i == 234){
+			}
 		}
 	}
-	for(int l = 0;l < 8;l++){
+	for(int l = 0;l < 9;l++){
 		if(lookfor(aritm[l],slice) != strlen(slice)){
 			if(aritm[l] == aritm[0]){
 				if(used >= used + 100){
-					char *more = realloc(varnames,used + 100 * sizeof("very_long_varname"));
+					char *more = realloc(varnames,used + 100 * sizeof(char[MAXL]));
 					*varnames = more;
-					more = realloc(values,used + 100 * sizeof("1234567891011"));
+					more = realloc(values,used + 100 * sizeof(char[MAXL]));
 					*values = more;
 				}
 				int name = lookfor_var(varnames,sbst(ln,0,lookfor(aritm[0],slice)));
@@ -182,7 +216,20 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 					}
 				}
 			}
-			else if(l >= 1 && l != 6 && lookfor(aritm[l],ln) != strlen(ln)){
+			else if(aritm[l] == aritm[8]){
+				if(nused > nused + 95){
+					int *(imore) = realloc(nvals,nused + 100 * sizeof(int));
+					*nvals = *imore;
+					char *more = realloc(nvnames,nused + 100 * sizeof(char[MAXL]));
+					*nvnames = more;
+				}
+				nvnames[used] = malloc(MAXL);
+				strcpy(nvnames[used],sbst(ln,lookfor(aritm[8],ln) + strlen(aritm[8]) + 1,lookfor(";",ln)));
+				nvals[used] = nR;
+				printf("\n%d\n",nvals[used]);
+				nused += 1;
+			}
+			else if(lookfor(aritm[l],ln) != strlen(ln) && l < 8 && l != 6){
 				char *subs = sbst(ln,lookfor(aritm[l],ln) + strlen(aritm[l]) + 1,lookfor(";",ln));
 				int conv[strlen(subs)];
 				for(int m = 0;m < strlen(subs);m++){
@@ -224,16 +271,15 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				}
 			}
 		}
-	}
-	for(int f = 0;f < 4;){
-	}
-	return(0);
+	} return(0);
 }
 
 int main(int argc, char *argv[]){
 	srand(time(NULL));
 	char *(*varnames) = malloc(used + 100 * sizeof(char[MAXL]));
+	char *(*numvarnames) = malloc(nused + 100 * sizeof(char[MAXL]));
 	char *(*values) = malloc(used + 100 * sizeof(char[MAXL]));
+	int *(nvalues) = malloc(nused + 100 * sizeof(int));
 	if(argc > 1){
 		if(strcmp(argv[1], "-f") == 0 || strcmp(argv[1], "--file") == 0 && argc > 2){
 			char  line[MAXL];
@@ -248,16 +294,14 @@ int main(int argc, char *argv[]){
 				return(1);
 			}
 			while(fgets(line, MAXL, filePtr) != NULL){
-				if(kgoin == 0 && ignore <= 0){
-					dothings(line,linum,&ignore,&kgoin,varnames,values);
-					linum += 1;
-				} else {
-					kgoin   = 0;
-					ignore -= 1;
-				}
+				dothings(line,linum,&ignore,&kgoin,varnames,values,numvarnames,nvalues);
+				linum += 1;
 			}
 			fclose(filePtr);
 			free(varnames);
+			free(values);
+			free(numvarnames);
+			free(nvalues);
 		}
 	}
 	return(0);

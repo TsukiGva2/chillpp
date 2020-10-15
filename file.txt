@@ -3,11 +3,26 @@ yell uppercase;
 
 something is 1234;
 num something;
+nop	WARNING: this DOES NOT change the variable
+nop	the NUM operation creates an integer COPY
+nop	of the variable and saves it in the temporary variable %NUM%
 
 say /something%;
-nop comment
 
 maybe;
 mod 23;
+nop	now we are making operations with the value in %NUM%
+nop	and not in the variable itself
 
 say %NUM%;
+nop	we show the value in %NUM%
+
+nop	NOTE: we can store the value in %NUM% into a special type of variable
+nop	that we will talk about later
+
+skip 2;
+nop 	skips specified number of lines
+say ignored
+nop 	WARNING: comments DO count as lines though
+
+store lol;
