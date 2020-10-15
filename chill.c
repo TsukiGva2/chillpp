@@ -1,6 +1,6 @@
 /*
  * File:	chill.c
- * Author:	tsukigva@gmail.com
+ * Author:	TsukiGva -> tsukigva@gmail.com
  * Description:	CHILL programming language
  */
 
@@ -9,23 +9,30 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* we need a header file, the next 100+ lines are a mess!
+ * i dont care.
+ */
+
 #define MAXL 200
 
+// return values
 #define COMMENT 2
 #define STOPPED 3
 #define SKIPPED 4
 #define OPERROR 5
 
+// we need a pretty code!
 #define TEMPINT int
 #define COUNTER int
 
-int nR 	       = 0;
-int used       = 0;
-int nused      = 0;
-char *keyw[5]  = {"yell","say","maybe","?NUM","skip"};
+int nR 	        = 0;
+int used        = 0;
+int nused       = 0;
+char *keyw[5]   = {"yell","say","maybe","?NUM","skip"};
 char *aritm[10] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from"};
-char *comp[4]  = {"eqs",">","<","not"};
+char *comp[4]   = {"eqs",">","<","not"};
 
+// pow_(5,2) = 25
 int pow_(int base,int exp){
 	long long result = 1;
 	while(exp != 0){
@@ -260,7 +267,7 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 			}
 		}
 	}
-	for(int l = 0;l < 9;l++){
+	for(int l = 0;l < 10;l++){
 		if(lookfor(aritm[l],slice) != strlen(slice)){
 			if(aritm[l] == aritm[0]){
 				if(used >= used + 100){
@@ -313,6 +320,12 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				nvals[nused] = nR;
 				printf("\n%s = %d\n",nvnames[nused],nvals[nused]);
 				nused += 1;
+			}
+			else if(aritm[l] == aritm[9]){
+				int inDx = lookfor_vn(nvnames,sbst(ln,lookfor(aritm[9],ln) + strlen(aritm[9]) + 1,lookfor(";",ln)));
+				if(inDx != -1){
+					nR = nvals[inDx];
+				}
 			}
 			else if(lookfor(aritm[l],ln) != strlen(ln) && l < 8 && l != 6){
 				char *subs = sbst(ln,lookfor(aritm[l],ln) + strlen(aritm[l]) + 1,lookfor(";",ln));

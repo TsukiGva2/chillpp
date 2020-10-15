@@ -39,3 +39,6 @@ say !go%;
 
 ?NUM > 1;
 say yes;
+
+load-from vlol;
+say %NUM%;
