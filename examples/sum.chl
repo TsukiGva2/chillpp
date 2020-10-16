@@ -1,0 +1,11 @@
+repeat type the first number;
+say ;
+ask;
+store-in firstnum;
+repeat type the second number;
+say ;
+ask;
+store-in secondnum;
+load-from secondnum;
+add !firstnum%;
+say %NUM%;

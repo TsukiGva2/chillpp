@@ -11,6 +11,9 @@ repeat		Q: ...Ok, so, how do i use it?
 repeat		A: I will show you
 repeat _________________________________________________
 
+repeat type something and press <enter> to start . . .;
+ask;
+nop	ill explain ASK later
 
 nop	comment
 nop	paint green; i commented this because it doesnt work on windows :)
@@ -143,4 +146,14 @@ say ;
 
 nop ------------------------------------------------------------------
 
+
+nop			     (USER INPUT)
+nop ------------------------------------------------------------------
+
+ask;
+nop	ask will wait for a user to input a number and store it in %NUM%
+nop     we will see askFS (ASK For String) in a future version.
+say %NUM%;
+
+nop ------------------------------------------------------------------
 nop see you in the next version of CHILL

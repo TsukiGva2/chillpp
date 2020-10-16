@@ -38,7 +38,7 @@ int nR 	        = 0;
 int used        = 0;
 int nused       = 0;
 char *keyw[7]   = {"yell","say","maybe","?NUM","skip","repeat","paint"};
-char *aritm[10] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from"};
+char *aritm[11] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from","ask"};
 char *comp[4]   = {"eqs",">","<","not"};
 char *colors[6]	= {"red","green","yellow","blue","pink",""};
 
@@ -304,8 +304,8 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 			}
 		}
 	}
-	for(int l = 10;l > -1;l--){
-		if(lookfor(aritm[l],slice) != strlen(slice)){
+	for(int l = 11;l > -1;l--){
+		if(lookfor(aritm[l],ln) != strlen(ln)){
 			if(aritm[l] == aritm[0]){
 				if(used >= used + 100){
 					char *more = realloc(varnames,used + 100 * sizeof(char[MAXL]));
@@ -325,6 +325,9 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 					strcpy(values[used],sbst(ln,lookfor(aritm[0],ln) + strlen(aritm[0]) + 1,lookfor(";",ln)));
 					used += 1;
 				}
+			}
+			else if(aritm[l] == aritm[10]){
+				scanf("%d",&nR);
 			}
 			else if(aritm[l] == aritm[6]){
 				int index = lookfor_var(varnames,sbst(ln,lookfor("num",ln) + 4,lookfor(";",ln)));
@@ -363,20 +366,29 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 					nR = nvals[inDx];
 				}
 			}
-			else if(lookfor(aritm[l],ln) != strlen(ln) && l < 8 && l != 6){
+			else if(l < 8 && l != 6){
 				char *subs = sbst(ln,lookfor(aritm[l],ln) + strlen(aritm[l]) + 1,lookfor(";",ln));
-				int conv[strlen(subs)];
-				for(int m = 0;m < strlen(subs);m++){
-					conv[m] = cvrt(subs[m]);
-				}	
-				int arrlen = sizeof(conv) / 4;
 				int snR = 0;
-				for(int h = 0;h < arrlen;h++){
-					if(arrlen - (h + 1) != 0){
-						snR += conv[h] * pow_(10,arrlen - (h + 1));
+				if(lookfor("!",ln) != strlen(ln) && lookfor("%",ln) != strlen(ln)){
+					int inDx = lookfor_vn(nvnames,sbst(ln,lookfor("!",ln) + 1,lookfor("%",ln)));
+					if(inDx != -1){
+						snR = nvals[inDx];
+					} else {
+						return(OPERROR);
 					}
-					else {
-						snR += conv[h];
+				} else {
+					int conv[strlen(subs)];
+					for(int m = 0;m < strlen(subs);m++){
+						conv[m] = cvrt(subs[m]);
+					}	
+					int arrlen = sizeof(conv) / 4;
+					for(int h = 0;h < arrlen;h++){
+						if(arrlen - (h + 1) != 0){
+							snR += conv[h] * pow_(10,arrlen - (h + 1));
+						}
+						else {
+							snR += conv[h];
+						}
 					}
 				}
 				switch(l){
