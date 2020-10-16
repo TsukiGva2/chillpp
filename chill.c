@@ -277,16 +277,16 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 					more = realloc(values,used + 100 * sizeof(char[MAXL]));
 					*values = more;
 				}
-				int name = lookfor_var(varnames,sbst(ln,0,lookfor(aritm[0],slice)));
+				int name = lookfor_var(varnames,sbst(ln,0,lookfor(aritm[0],ln)));
 				/* NUNCA FAÇA SUBSTRING EM UMA SUBSTRING */
 				if(name != -1){
-					strcpy(values[name],sbst(ln,lookfor("is",ln) + 3,lookfor(";",ln)));
+					strcpy(values[name],sbst(ln,lookfor(aritm[0],ln) + strlen(aritm[0]) + 1,lookfor(";",ln)));
 				}
 				else {
 					varnames[used] = malloc(MAXL);
-					strcpy(varnames[used],sbst(ln,0,lookfor("is",ln)));
+					strcpy(varnames[used],sbst(ln,0,lookfor(aritm[0],ln) - 1));
 					values[used] = malloc(MAXL);
-					strcpy(values[used],sbst(ln,lookfor("is",ln) + 3,lookfor(";",ln)));
+					strcpy(values[used],sbst(ln,lookfor(aritm[0],ln) + strlen(aritm[0]) + 1,lookfor(";",ln)));
 					used += 1;
 				}
 			}
@@ -380,15 +380,20 @@ int main(int argc, char *argv[]){
 	char *(*numvarnames) = malloc(nused + 100 * sizeof(char[MAXL]));
 	char *(*values) = malloc(used + 100 * sizeof(char[MAXL]));
 	int (*nvalues) = malloc(nused + 100 * sizeof(int));
+	varnames[0] = malloc(MAXL);
+	strcpy(varnames[0],"haoifhuifgadgf");	
+	values[0] = malloc(MAXL);
+	strcpy(values[0],"100");
+	used += 1;
 	if(argc > 1){
 		if((strcmp(argv[1], "-f") == 0 || strcmp(argv[1], "--file") == 0) && argc > 2){
 			char  line[MAXL];
 			FILE *filePtr;
+			char  l_line[MAXL];
 			int   linum   = 0;
 			int   kgoin   = 0;
 			int   ignore  = 0;
-		       	varnames[0] = malloc(MAXL);
-			strcpy(varnames[0],"something");
+			int   savec   = 0;
 			if((filePtr = fopen(argv[2], "r")) == NULL){
 				printf("\nError opening file\n");
 				return(1);

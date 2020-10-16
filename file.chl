@@ -7,8 +7,6 @@ nop	WARNING: this DOES NOT change the variable
 nop	the NUM operation creates an integer COPY
 nop	of the variable and saves it in the temporary variable %NUM%
 
-say /something%;
-
 maybe;
 mod 23;
 nop	now we are making operations with the value in %NUM%
@@ -23,6 +21,10 @@ repeat "say %NUM%hithere" results in:;
 say ;
 say %NUM%hithere;
 say ;
+
+repeat i dont know why this happens
+repeat but i dont care, i suck at C, but
+repeat feel free to fork the project and fix it
 
 nop	we show the value in %NUM%, WARNING: dont print %NUM% directly
 nop	store the value first and then print it, we will talk about it
