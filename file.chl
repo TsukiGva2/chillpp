@@ -1,12 +1,43 @@
+repeat		  ____	          
+repeat		/      |    |    /  /     /
+repeat	       |       |____|   /  /     /
+repeat	       |       |    |  /  /     /
+repeat		\ ____ |    | /  /____ /____
+
+repeat _________________________________________________
+repeat		Q: why you made this? 
+repeat		A: yes
+repeat		Q: ...Ok, so, how do i use it?
+repeat		A: I will show you
+repeat _________________________________________________
+
+
+nop	comment
+nop	paint green; i commented this because it doesnt work on windows :)
+nop	use "paint <color>" to change colors, WARNING: pink and yellow are broken, they simply dont work
 say lowercase;
+nop	print something
 yell uppercase;
+nop	print something in UPPERCASE
 
 something is 1234;
+nop	variable declaration
+
+say %NUM%;
+nop	this is the temporary variable that our numbers are stored
+nop	when we do some operations with them, we can load or store a value
+nop	in or from %NUM%.
+nop	its default value is 0 by the way.
+
 num something;
 nop	WARNING: this DOES NOT change the variable
 nop	the NUM operation creates an integer COPY
 nop	of the variable and saves it in the temporary variable %NUM%
 
+
+nop	this comment is not below the "maybe" statement because
+nop	maybe executes only the line below it.
+nop	and of course, has a 50% chance of executing it.
 maybe;
 mod 23;
 nop	now we are making operations with the value in %NUM%
@@ -16,17 +47,22 @@ repeat printing the %NUM% variable directly is bad,;
 nop	"repeat" prints literally what you wrote
 say you will see why.;
 
+
 say ;
+nop	this prints a newline
+
 repeat "say %NUM%hithere" results in:;
 say ;
 say %NUM%hithere;
 say ;
 
-repeat i dont know why this happens
-repeat but i dont care, i suck at C, but
-repeat feel free to fork the project and fix it
+repeat _----------------------------_
+repeat |i dont know why this happens |___
+repeat |but i dont care, i suck at C, but|______
+repeat |feel free to fork the project and fix it|
+repeat |-----------------------------------------
 
-nop	we show the value in %NUM%, WARNING: dont print %NUM% directly
+nop	so yeah, you read it, dont print %NUM% directly!
 nop	store the value first and then print it, we will talk about it
 nop	in the cool stuff section
 
@@ -36,8 +72,75 @@ nop	that we will talk about later
 skip 2;
 nop 	skips specified number of lines
 say ignored;
-nop 	WARNING: comments DO count as lines though
+nop 	WARNING: comments DO count as lines!
+
+
 
 nop	/////////////////////////////////////////
 nop		  COOL STUFF DOWN HERE!
 nop	///////////////////////////////////////// 
+
+nop		      (CONDITIONS)
+nop --------------------------------------------------
+
+?NUM eqs 44;
+skip 5;
+nop	so, this is kinda like the "maybe" statement
+nop	?NUM, is the same as (if %NUM% <expression>)
+nop	so here, if the number in %NUM% EQualS 44
+nop	then the program will execute the line below it.
+repeat this will not be ignored since the expression is false;
+say ;
+
+?NUM not 44;
+skip 2;
+nop	--this is TRUE--
+repeat ignored;
+
+?NUM > 15;
+repeat maybe;
+say ;
+
+?NUM < 15;
+repeat you got the idea...;
+say ;
+
+nop --------------------------------------------------
+
+nop		       (STORE-IN AND LOAD-FROM)
+nop -----------------------------------------------------------------
+
+nop ___we do some math__
+add 34;
+div 23;
+sub 1;
+nop _-_-_-_-_-_-_-_-_-_-
+say %NUM%;
+say ;
+
+nop __and then we store that value_
+store-in somevar;
+nop _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+say !somevar%;
+nop	now instead of / and %, we use ! and %
+
+nop ___we do more math__
+add 222;
+div 2;
+sub 23;
+nop _-_-_-_-_-_-_-_-_-_-
+say %NUM%
+say ;
+
+nop __BUT... we did something wrong and need to get the old value__
+load-from !somevar%;
+nop _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+say %NUM%;
+repeat VOILA!;
+say ;
+
+nop ------------------------------------------------------------------
+
+nop see you in the next version of CHILL

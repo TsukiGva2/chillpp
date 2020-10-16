@@ -2,6 +2,8 @@
  * File:	chill.c
  * Author:	TsukiGva -> tsukigva@gmail.com
  * Description:	CHILL programming language
+ * Note: i'm the WORST programmer in earth
+ * so dont judge me for my code, just fix it.
  */
 
 #include <stdio.h>
@@ -13,7 +15,14 @@
  * i dont care.
  */
 
-#define MAXL 200
+#define MAXL 700
+
+// ANSI COLORS!
+#define RED "\033[31;1m"
+#define GRN "\033[32;1m"
+#define YLW "fixme "
+#define BLU "\033[34;1m"
+#define PNK "fixme too"
 
 // return values
 #define COMMENT 2
@@ -28,9 +37,10 @@
 int nR 	        = 0;
 int used        = 0;
 int nused       = 0;
-char *keyw[6]   = {"yell","say","maybe","?NUM","skip","repeat"};
+char *keyw[7]   = {"yell","say","maybe","?NUM","skip","repeat","paint"};
 char *aritm[10] = {"is","add","sub","mul","pow","div","num","mod","store-in","load-from"};
 char *comp[4]   = {"eqs",">","<","not"};
+char *colors[6]	= {"red","green","yellow","blue","pink",""};
 
 // pow_(5,2) = 5*5 = 25
 int pow_(int base,int exp){
@@ -147,11 +157,37 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 	}
 	char *slice = sbst(ln,0,lookfor(";",ln));
 	char *newl = "\n";
-	for(int i = 6;i > -1;i--){
+	for(int i = 7;i > -1;i--){
 		if(lookfor(keyw[i],ln) != strlen(ln)){
 			if(keyw[i] == keyw[5]){
-				printf("%s\n",sbst(ln,lookfor(keyw[5],ln) + strlen(keyw[5]) + 1,lookfor(";",ln)));
+				printf("%s",sbst(ln,lookfor(keyw[5],ln) + strlen(keyw[5]) + 1,lookfor(";",ln)));
 				return(0);
+			}
+			else if(keyw[i] == keyw[6]){
+				for(int x = 0;x < 5;x++){
+					if(lookfor(colors[x],ln) != strlen(ln)){
+						switch(x){
+							case 0:
+								printf("%s",RED);
+							break;
+							case 1:
+								printf("%s",GRN);
+							break;
+							case 2:
+								printf("%s",YLW);
+							break;
+							case 5:
+								printf("%s",YLW);
+							break;
+							case 3:
+								printf("%s",BLU);
+							break;
+							case 4:
+								printf("%s",PNK);
+							break;
+						}
+					}
+				}
 			}
 			else if(keyw[i] == keyw[1]){
 				if(lookfor("/",ln) != strlen(ln) && lookfor("%",ln) != strlen(ln)){
@@ -268,7 +304,7 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 			}
 		}
 	}
-	for(int l = 0;l < 10;l++){
+	for(int l = 10;l > -1;l--){
 		if(lookfor(aritm[l],slice) != strlen(slice)){
 			if(aritm[l] == aritm[0]){
 				if(used >= used + 100){
@@ -322,7 +358,7 @@ int dothings(char *ln,int lnum,int *ign,int *kgoin,char **varnames,char **values
 				nused += 1;
 			}
 			else if(aritm[l] == aritm[9]){
-				int inDx = lookfor_vn(nvnames,sbst(ln,lookfor(aritm[9],ln) + strlen(aritm[9]) + 1,lookfor(";",ln)));
+				int inDx = lookfor_vn(nvnames,sbst(ln,lookfor("!",ln) + 1,lookfor("%",ln)));
 				if(inDx != -1){
 					nR = nvals[inDx];
 				}
@@ -407,6 +443,9 @@ int main(int argc, char *argv[]){
 			free(values);
 			free(numvarnames);
 			free(nvalues);
+		}
+		else if(strcmp("-v",argv[1]) == 0){
+			printf("CHILL programming language, -alpha- v0.2\n");
 		}
 	}
 	return(0);
